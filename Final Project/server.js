@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const connectDB = require('./database/connect');
 const User = require('./database/models/User');
 const Recipe = require('./database/models/Recipe');
+const Ingredient = require('./database/models/Ingredient');
 const Review = require('./database/models/Review');
 const MealPlan = require('./database/models/MealPlan');
 
@@ -112,6 +113,26 @@ app.delete('/api/recipes/:id', authenticateToken, async (req, res) => {
     res.json({ message: 'Recipe deleted' });
   } catch (err) {
     res.status(400).json({ message: 'Error deleting recipe' });
+  }
+});
+
+// Ingredient Routes
+app.post('/api/ingredients', authenticateToken, async (req, res) => {
+  try {
+    const ingredient = new Ingredient(req.body);
+    await ingredient.save();
+    res.status(201).json(ingredient);
+  } catch (err) {
+    res.status(400).json({ message: 'Error creating ingredient' });
+  }
+});
+
+app.get('/api/ingredients', async (req, res) => {
+  try {
+    const ingredients = await Ingredient.find();
+    res.json(ingredients);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching ingredients' });
   }
 });
 
