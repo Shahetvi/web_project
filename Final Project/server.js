@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const connectDB = require('./database/connect');
 const User = require('./database/models/User');
+const Recipe = require('./database/models/Recipe');
+const Review = require('./database/models/Review');
 const MealPlan = require('./database/models/MealPlan');
 
 const app = express();
@@ -70,6 +72,66 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (err) {
     console.error('Error creating user:', err);
     res.status(500).json({ message: 'Server error : ' + err });
+  }
+});
+
+// Recipe CRUD Routes
+app.post('/api/recipes', authenticateToken, async (req, res) => {
+  try {
+    const recipe = new Recipe({ ...req.body, author: req.user.id });
+    await recipe.save();
+    res.status(201).json(recipe);
+  } catch (err) {
+    console.error('Error creating user:', err);
+    res.status(500).json({ message: 'Server error : ' + err });
+  }
+});
+
+app.get('/api/recipes', async (req, res) => {
+  try {
+    const recipes = await Recipe.find();
+    res.json(recipes);
+  } catch (err) {
+    console.error('Error creating user:', err);
+    res.status(500).json({ message: 'Server error : ' + err });
+  }
+});
+
+app.put('/api/recipes/:id', authenticateToken, async (req, res) => {
+  try {
+    const updated = await Recipe.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ message: 'Error updating recipe' });
+  }
+});
+
+app.delete('/api/recipes/:id', authenticateToken, async (req, res) => {
+  try {
+    await Recipe.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Recipe deleted' });
+  } catch (err) {
+    res.status(400).json({ message: 'Error deleting recipe' });
+  }
+});
+
+// Review Routes
+app.post('/api/reviews', authenticateToken, async (req, res) => {
+  try {
+    const review = new Review({ ...req.body, user: req.user.id });
+    await review.save();
+    res.status(201).json(review);
+  } catch (err) {
+    res.status(400).json({ message: 'Error creating review' });
+  }
+});
+
+app.get('/api/reviews/:recipeId', async (req, res) => {
+  try {
+    const reviews = await Review.find({ recipe: req.params.recipeId }).populate('user', 'username');
+    res.json(reviews);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching reviews' });
   }
 });
 
