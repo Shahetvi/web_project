@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const connectDB = require('./database/connect');
 const User = require('./database/models/User');
+const MealPlan = require('./database/models/MealPlan');
 
 const app = express();
 connectDB();
@@ -69,6 +70,26 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (err) {
     console.error('Error creating user:', err);
     res.status(500).json({ message: 'Server error : ' + err });
+  }
+});
+
+// Meal Plan Routes
+app.post('/api/mealplans', authenticateToken, async (req, res) => {
+  try {
+    const mealPlan = new MealPlan({ ...req.body, user: req.user.id });
+    await mealPlan.save();
+    res.status(201).json(mealPlan);
+  } catch (err) {
+    res.status(400).json({ message: 'Error creating meal plan' });
+  }
+});
+
+app.get('/api/mealplans', authenticateToken, async (req, res) => {
+  try {
+    const mealPlans = await MealPlan.find({ user: req.user.id }).populate('days.recipes');
+    res.json(mealPlans);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching meal plans' });
   }
 });
 
