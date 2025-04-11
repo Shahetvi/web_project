@@ -90,10 +90,37 @@ app.post('/api/recipes', authenticateToken, async (req, res) => {
 
 app.get('/api/recipes', async (req, res) => {
   try {
-    const recipes = await Recipe.find();
+    const { name, ingredient, cuisine, mealType, difficulty, maxPrepTime } = req.query;
+    const filter = {};
+
+    if (name) {
+      filter.name = { $regex: name, $options: 'i' };
+    }
+
+    if (ingredient) {
+      filter['ingredients.name'] = { $regex: ingredient, $options: 'i' };
+    }
+
+    if (cuisine) {
+      filter.cuisine = { $regex: cuisine, $options: 'i' };
+    }
+
+    if (mealType) {
+      filter.mealType = { $regex: mealType, $options: 'i' };
+    }
+
+    if (difficulty) {
+      filter.difficulty = difficulty;
+    }
+
+    if (maxPrepTime) {
+      filter.prepTime = { $lte: parseInt(maxPrepTime) };
+    }
+
+    const recipes = await Recipe.find(filter);
     res.json(recipes);
   } catch (err) {
-    console.error('Error creating user:', err);
+    console.error('Error fetching recipes:', err);
     res.status(500).json({ message: 'Server error : ' + err });
   }
 });
