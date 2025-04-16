@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recipes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container">
+    <h1>Recipes</h1>
+
+    <!-- Flash messages for success/failure -->
+    <% if (message) { %>
+      <div class="alert <%= message.type %>">
+        <%= message.text %>
+      </div>
+    <% } %>
+
+    <div class="actions">
+      <% if (isAdmin) { %>
+        <a href="/recipes/new" class="btn">Add Recipe</a>
+      <% } %>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Cuisine</th>
+          <th>Meal Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% recipes.forEach(recipe => { %>
+          <tr>
+            <td><%= recipe.name %></td>
+            <td><%= recipe.cuisine %></td>
+            <td><%= recipe.mealType %></td>
+            <td>
+              <a href="/recipes/view/<%= recipe._id %>" class="btn">View</a>
+
+              <% if (isAdmin) { %>
+                <a href="/recipes/edit/<%= recipe._id %>" class="btn">Edit</a>
+                <form action="/recipes/<%= recipe._id %>/delete" method="POST" style="display:inline;">
+                  <button type="submit" class="btn" onclick="return confirmDelete()">Delete</button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <%- include('partials/footer') %>
+  <script>
+    function confirmDelete() {
+      return confirm('Are you sure you want to delete this recipe?');
+    }
+  </script>
+</body>
+</html>

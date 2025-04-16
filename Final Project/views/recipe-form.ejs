@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= recipe ? 'Edit Recipe' : 'Add Recipe' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container">
+    <h1><%= recipe ? 'Edit Recipe' : 'Add Recipe' %></h1>
+
+    <!-- Flash messages for success/failure -->
+    <% if (message) { %>
+      <div class="alert <%= message.type %>">
+        <%= message.text %>
+      </div>
+    <% } %>
+
+    <!-- <form action="<%= recipe ? '/recipes/' + recipe._id + '/edit' : '/recipes/new' %>" method="POST"> -->
+    <form action="<%= recipe ? '/recipes/update/' + recipe._id : '/recipes/new' %>" method="POST">
+
+
+      <div>
+        <label for="name">Recipe Name</label>
+        <input type="text" name="name" id="name" value="<%= recipe ? recipe.name : '' %>" required>
+      </div>
+
+      <div>
+        <label for="cuisine">Cuisine</label>
+        <input type="text" name="cuisine" id="cuisine" value="<%= recipe ? recipe.cuisine : '' %>">
+      </div>
+
+      <div>
+        <label for="mealType">Meal Type</label>
+        <input type="text" name="mealType" id="mealType" value="<%= recipe ? recipe.mealType : '' %>">
+      </div>
+
+      <!-- Ingredients -->
+      <div>
+        <label for="ingredients">Ingredients</label>
+        <div id="ingredients-container">
+            <% if (recipe && recipe.ingredients) { %>
+                <% recipe.ingredients.forEach((ingredient, index) => { %>
+                  <div class="ingredient-item">
+                    <select name="ingredients[<%= index %>][id]" required>
+                      <% ingredients.forEach(ingredientOption => { %>
+                        <option value="<%= ingredientOption._id %>"
+                          <%= ingredientOption.name === ingredient.name && ingredientOption.unit === ingredient.unit ? 'selected' : '' %>>
+                          <%= ingredientOption.name %> - <%= ingredientOption.unit %>
+                        </option>
+                      <% }) %>
+                    </select>
+                    <input type="number" name="ingredients[<%= index %>][quantity]" value="<%= ingredient.quantity %>" required>
+                    <input type="text" name="ingredients[<%= index %>][unit]" value="<%= ingredient.unit %>" required>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <div class="ingredient-item">
+                  <select name="ingredients[0][id]" required>
+                    <% ingredients.forEach(ingredientOption => { %>
+                      <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %> - <%= ingredientOption.unit %></option>
+                    <% }) %>
+                  </select>
+                  <input type="number" name="ingredients[0][quantity]" required>
+                  <input type="text" name="ingredients[0][unit]" required>
+                </div>
+              <% } %>
+              
+              
+        </div>
+        <button type="button" onclick="addIngredient()">Add Ingredient</button>
+      </div>
+
+      <!-- Instructions -->
+      <div>
+        <label for="instructions">Instructions</label>
+        <textarea name="instructions" id="instructions" required><%= recipe ? recipe.instructions : '' %></textarea>
+      </div>
+
+      <!-- Difficulty -->
+      <div>
+        <label for="difficulty">Difficulty</label>
+        <select name="difficulty" id="difficulty">
+          <option value="easy" <%= recipe && recipe.difficulty === 'easy' ? 'selected' : '' %>>Easy</option>
+          <option value="medium" <%= recipe && recipe.difficulty === 'medium' ? 'selected' : '' %>>Medium</option>
+          <option value="hard" <%= recipe && recipe.difficulty === 'hard' ? 'selected' : '' %>>Hard</option>
+        </select>
+      </div>
+
+      <!-- Nutrition -->
+      <div>
+        <h3>Nutrition Info</h3>
+        <label for="calories">Calories</label>
+        <input type="number" name="nutrition[calories]" id="calories" value="<%= recipe && recipe.nutrition ? recipe.nutrition.calories : '' %>">
+
+        <label for="fat">Fat (g)</label>
+        <input type="number" name="nutrition[fat]" id="fat" value="<%= recipe && recipe.nutrition ? recipe.nutrition.fat : '' %>">
+
+        <label for="carbs">Carbs (g)</label>
+        <input type="number" name="nutrition[carbs]" id="carbs" value="<%= recipe && recipe.nutrition ? recipe.nutrition.carbs : '' %>">
+
+        <label for="protein">Protein (g)</label>
+        <input type="number" name="nutrition[protein]" id="protein" value="<%= recipe && recipe.nutrition ? recipe.nutrition.protein : '' %>">
+      </div>
+
+      <!-- Preparation Time -->
+      <div>
+        <label for="prepTime">Preparation Time (minutes)</label>
+        <input type="number" name="prepTime" id="prepTime" value="<%= recipe ? recipe.prepTime : '' %>">
+      </div>
+
+      <button type="submit" class="btn"><%= recipe ? 'Update Recipe' : 'Add Recipe' %></button>
+    </form>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    function addIngredient() {
+      const index = document.querySelectorAll('.ingredient-item').length;
+      const container = document.getElementById('ingredients-container');
+      const newIngredient = document.createElement('div');
+      newIngredient.classList.add('ingredient-item');
+      
+      newIngredient.innerHTML = `
+        <select name="ingredients[${index}][id]" required>
+          <% ingredients.forEach(ingredientOption => { %>
+            <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %> - <%= ingredientOption.unit %></option>
+          <% }) %>
+        </select>
+        <input type="number" name="ingredients[${index}][quantity]" required>
+        <input type="text" name="ingredients[${index}][unit]" required>
+      `;
+      container.appendChild(newIngredient);
+    }
+  </script>
+</body>
+</html>
