@@ -109,6 +109,134 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
+// Recipe CRUD Routes
+app.post('/api/recipes', authenticateToken, async (req, res) => {
+  try {
+    const recipe = new Recipe({ ...req.body, author: req.user.id });
+    await recipe.save();
+    res.status(201).json(recipe);
+  } catch (err) {
+    console.error('Error creating user:', err);
+    res.status(500).json({ message: 'Server error : ' + err });
+  }
+});
+
+app.get('/api/recipes', async (req, res) => {
+  try {
+    const { name, ingredient, cuisine, mealType, difficulty, maxPrepTime } = req.query;
+    const filter = {};
+
+    if (name) {
+      filter.name = { $regex: name, $options: 'i' };
+    }
+
+    if (ingredient) {
+      filter['ingredients.name'] = { $regex: ingredient, $options: 'i' };
+    }
+
+    if (cuisine) {
+      filter.cuisine = { $regex: cuisine, $options: 'i' };
+    }
+
+    if (mealType) {
+      filter.mealType = { $regex: mealType, $options: 'i' };
+    }
+
+    if (difficulty) {
+      filter.difficulty = difficulty;
+    }
+
+    if (maxPrepTime) {
+      filter.prepTime = { $lte: parseInt(maxPrepTime) };
+    }
+
+    const recipes = await Recipe.find(filter);
+    res.json(recipes);
+  } catch (err) {
+    console.error('Error fetching recipes:', err);
+    res.status(500).json({ message: 'Server error : ' + err });
+  }
+});
+
+app.put('/api/recipes/:id', authenticateToken, async (req, res) => {
+  try {
+    const updated = await Recipe.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ message: 'Error updating recipe' });
+  }
+});
+
+app.delete('/api/recipes/:id', authenticateToken, async (req, res) => {
+  try {
+    await Recipe.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Recipe deleted' });
+  } catch (err) {
+    res.status(400).json({ message: 'Error deleting recipe' });
+  }
+});
+
+// Ingredient Routes
+app.post('/api/ingredients', authenticateToken, async (req, res) => {
+  try {
+    const ingredient = new Ingredient(req.body);
+    await ingredient.save();
+    res.status(201).json(ingredient);
+  } catch (err) {
+    res.status(400).json({ message: 'Error creating ingredient' });
+  }
+});
+
+app.get('/api/ingredients', async (req, res) => {
+  try {
+    const ingredients = await Ingredient.find();
+    res.json(ingredients);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching ingredients' });
+  }
+});
+
+// Review Routes
+app.post('/api/reviews', authenticateToken, async (req, res) => {
+  try {
+    const review = new Review({ ...req.body, user: req.user.id });
+    await review.save();
+    res.status(201).json(review);
+  } catch (err) {
+    res.status(400).json({ message: 'Error creating review' });
+  }
+});
+
+app.get('/api/reviews/:recipeId', async (req, res) => {
+  try {
+    const reviews = await Review.find({ recipe: req.params.recipeId }).populate('user', 'username');
+    res.json(reviews);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching reviews' });
+  }
+});
+
+// Meal Plan Routes
+app.post('/api/mealplans', authenticateToken, async (req, res) => {
+  try {
+    const mealPlan = new MealPlan({ ...req.body, user: req.user.id });
+    await mealPlan.save();
+    res.status(201).json(mealPlan);
+  } catch (err) {
+    res.status(400).json({ message: 'Error creating meal plan' });
+  }
+});
+
+app.get('/api/mealplans', authenticateToken, async (req, res) => {
+  try {
+    const mealPlans = await MealPlan.find({ user: req.user.id }).populate('days.recipes');
+    res.json(mealPlans);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching meal plans' });
+  }
+});
+
 // Port
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+

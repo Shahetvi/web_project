@@ -15,7 +15,7 @@ body::before {
 
 header {
   background: #0c6639;
-  background: ;
+  
   padding: 1em;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -38,7 +38,7 @@ nav a:hover {
 }
 
 .container {
-  max-width: 700px;
+  max-width: 750px;
   margin: 3em auto;
   background: #ffffff;
   padding: 2.5em;
