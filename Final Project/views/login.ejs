@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - RecipeMaster</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <% if (error) { %>
+    <script>
+      alert("<%= error %>");
+    </script>
+  <% } %>
+
+  <%- include('partials/header') %>
+
+  <div class="container">
+    <h2>Login</h2>
+    <form action="/login" method="POST">
+      <label for="email">Email:</label>
+      <input type="email" name="email" required />
+
+      <label for="password">Password:</label>
+      <input type="password" name="password" required />
+
+      <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="/register">Register here</a></p>
+  </div>
+
+  <%- include('partials/footer') %>
+</body>
+</html>
