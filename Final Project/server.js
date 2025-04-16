@@ -141,6 +141,75 @@ app.post('/recipes/:id/delete', authenticateToken, async (req, res) => {
   }
 });
 
+//View Recipe
+app.get('/recipes/view/:id', authenticateToken, async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    const ingredients = await Ingredient.find();
+    const reviews = await Review.find({ recipe: req.params.id }).populate('user');
+    const message = req.query.message || null;
+    res.render('recipe-view', { recipe, ingredients, message, reviews });
+  } catch (err) {
+    req.session.error = 'Failed to load recipe';
+    res.redirect('/recipes');
+  }
+});
+
+
+// Add a new review
+app.post('/recipes/:id/reviews/add', authenticateToken, async (req, res) => {
+  const { rating, comment } = req.body;
+  const recipeId = req.params.id;
+
+  try {
+    await Review.create({
+      recipe: recipeId,
+      user: req.user.id,
+      rating,
+      comment
+    });
+    res.redirect(`/recipes/${recipeId}/reviews`);
+  } catch (err) {
+    req.session.error = 'Failed to add review.';
+    res.redirect(`/recipes/${recipeId}/reviews`);
+  }
+});
+
+// Update an existing review
+app.post('/recipes/:id/reviews/update', authenticateToken, async (req, res) => {
+  const { rating, comment } = req.body;
+  const recipeId = req.params.id;
+
+  try {
+    await Review.findOneAndUpdate(
+      { recipe: recipeId, user: req.user.id },
+      { rating, comment }
+    );
+    res.redirect(`/recipes/${recipeId}/reviews`);
+  } catch (err) {
+    req.session.error = 'Failed to update review.';
+    res.redirect(`/recipes/${recipeId}/reviews`);
+  }
+});
+
+
+// Get all reviews
+app.get('/recipes/:id/reviews', authenticateToken, async (req, res) => {
+  const recipeId = req.params.id;
+
+  const recipe = await Recipe.findById(recipeId);
+  const allReviews = await Review.find({ recipe: recipeId }).populate('user');
+
+  const existingReview = await Review.findOne({ recipe: recipeId, user: req.user.id });
+
+  res.render('reviews', {
+    recipe,
+    reviews: allReviews,
+    userReview: existingReview,
+    userId: req.user.id
+  });
+});
+
 
 // User registration route
 app.post('/register', async (req, res) => {

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reviews - <%= recipe.name %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container">
+    <h1>Reviews for "<%= recipe.name %>"</h1>
+
+    <% if (userReview) { %>
+      <h3>Your Review</h3>
+      <form action="/recipes/<%= recipe._id %>/reviews/update" method="POST">
+        <label for="rating">Rating (1-5):</label>
+        <input type="number" name="rating" min="1" max="5" value="<%= userReview.rating %>" required>
+
+        <label for="comment">Comment:</label>
+        <textarea name="comment" required><%= userReview.comment %></textarea>
+
+        <button type="submit" class="btn">Update Review</button>
+      </form>
+    <% } else { %>
+      <h3>Add Your Review</h3>
+      <form action="/recipes/<%= recipe._id %>/reviews/add" method="POST">
+        <label for="rating">Rating (1-5):</label>
+        <input type="number" name="rating" min="1" max="5" required>
+
+        <label for="comment">Comment:</label>
+        <textarea name="comment" required></textarea>
+
+        <button type="submit" class="btn">Submit Review</button>
+      </form>
+    <% } %>
+
+    <hr>
+
+    <h3>All Reviews</h3>
+    <ul>
+      <% reviews.forEach(review => { %>
+        <li>
+          <strong><%= review.user.username %>:</strong> 
+          Rating: <%= review.rating %> - <%= review.comment %>
+        </li>
+      <% }) %>
+    </ul>
+
+    <a href="/recipes" class="btn">Back to Recipes</a>
+  </div>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

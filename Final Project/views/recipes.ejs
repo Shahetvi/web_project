@@ -41,6 +41,7 @@
             <td><%= recipe.mealType %></td>
             <td>
               <a href="/recipes/view/<%= recipe._id %>" class="btn">View</a>
+              <a href="/recipes/<%= recipe._id %>/reviews" class="btn">Review</a>
 
               <% if (isAdmin) { %>
                 <a href="/recipes/edit/<%= recipe._id %>" class="btn">Edit</a>
