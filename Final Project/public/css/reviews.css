@@ -1,0 +1,214 @@
+/* ---------------- Base Styles (from style.css) ---------------- */
+
+/* Background blur */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/image/Nutrition.avif'); 
+    background-size: cover;
+    background-position: center;
+    filter: blur(2px);
+    z-index: -1;
+    opacity: 0.8;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Sticky footer layout */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .page-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  /* Header styles */
+  header {
+    background: #0c6639;
+    padding: 1em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Navigation links */
+  nav {
+    display: flex;
+    justify-content: center;
+  }
+  
+  nav a {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 1em;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  nav a:hover {
+    color: #ffcb77;
+  }
+  
+  /* Main container */
+  .container {
+    max-width: 800px;
+    margin: 3em auto;
+    background: #ffffff;
+    padding: 2.5em;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Headings */
+  h1 {
+    text-align: center;
+    color: #0c6639;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 1.5em;
+  }
+  
+  h2 {
+    text-align: center;
+    color: #e75918;
+  }
+  
+  h3 {
+    color: #d77a61;
+    margin-top: 2em;
+    margin-bottom: 0.8em;
+    font-size: 1.2em;
+  }
+  
+  /* Labels */
+  label {
+    font-weight: 600;
+  }
+  
+  /* Inputs */
+  input,
+  select,
+  textarea {
+    padding: 0.6em;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: #fefefe;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #d77a61;
+    box-shadow: 0 0 6px rgba(215, 122, 97, 0.3);
+  }
+  
+  /* Submit Button and Link Button */
+  button,
+  .btn {
+    width: fit-content;
+    padding: 0.8em 1.5em;
+    background: #87c967;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-top: 1em;
+    text-align: center;
+    text-decoration: none;
+  }
+  
+  button:hover,
+  .btn:hover {
+    background: #0f7743;
+    transform: scale(1.03);
+    color: white;
+  }
+  
+  /* Paragraph */
+  p {
+    text-align: center;
+    margin-top: 1em;
+  }
+  
+  /* Link inside paragraph */
+  p a {
+    color: #d77a61;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  p a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Footer */
+  footer {
+    text-align: center;
+    background: #0c6639;
+    color: white;
+    font-size: 0.9em;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1em 0;
+    margin-top: auto;
+  }
+  
+  /* ---------------- Reviews Specific Styles ---------------- */
+  
+  /* Form layout */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin-bottom: 2em;
+  }
+  
+  /* Review list */
+  ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 1em;
+  }
+  
+  ul li {
+    background: #f9f9f9;
+    padding: 1em;
+    border-radius: 8px;
+    margin-bottom: 1em;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    line-height: 1.5;
+  }
+  
+  ul li strong {
+    color: #0c6639;
+  }
+  
+  /* Divider */
+  hr {
+    margin: 2em 0;
+    border: none;
+    border-top: 1px solid #ddd;
+  }
+  

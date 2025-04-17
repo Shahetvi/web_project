@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
   <%- include('partials/header') %>
@@ -13,9 +14,19 @@
     <p>Your role: <strong><%= user.role %></strong></p>
 
     <div class="actions">
-      <a href="/recipes">Recipes</a>
-      <a href="#">Reviews</a>
-      <a href="#">Meal Plans</a>
+      <a href="/recipes" class="card">
+        <img src="/image/recepieBook.avif" alt="Recipe Book">
+        <div class="card-content">
+          <p>Recipes</p>
+        </div>
+      </a>
+      
+      <a href="/mealplan" class="card">
+        <img src="/image/mealPlan.jpg" alt="Meal Plan">
+        <div class="card-content">
+          <p>Meal Plans</p>
+        </div>
+      </a>
     </div>
   </div>
 

@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>View Recipe</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/recipe-view.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
   <%- include('partials/header') %>
@@ -21,15 +22,9 @@
       <p>No ingredients listed.</p>
     <% } else { %>
       <ul>
-        <% recipe.ingredients.forEach(ingredient => {
-             const matched = ingredients.find(i =>
-               i._id?.toString() === ingredient.id?.toString()
-             );
-        %>
+        <% recipe.ingredients.forEach(ingredient => { %>
           <li>
-            <%= ingredient.quantity %> 
-            <%= ingredient.unit %> 
-            - <%= matched ? matched.name : 'Unknown Ingredient' %>
+            <%= ingredient.quantity %> <%= ingredient.unit %> - <%= ingredient.name %>
           </li>
         <% }) %>
       </ul>

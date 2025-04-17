@@ -1,0 +1,229 @@
+/* Background blur */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/image/Nutrition.avif'); /* Change this to your new image */
+    background-size: cover; /* Ensures the image covers the entire screen */
+    background-position: center center; /* Centers the image */
+    background-repeat: no-repeat; /* Ensures the image doesn't repeat */
+    filter: blur(2px);
+    z-index: -1;
+    opacity: 0.8;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/image/Nutrition.avif'); /* Use your image */
+    background-size: 120%; /* Scales the image down by 20% */
+    background-position: center center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents repeating */
+    filter: blur(2px);
+    z-index: -1;
+    opacity: 0.8;
+  }
+  
+  /* Sticky footer layout */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .page-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header styles */
+  header {
+    background: #0c6639;
+    padding: 1em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Navigation links */
+  nav {
+    display: flex;
+    justify-content: center;
+  }
+  
+  nav a {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 1em;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  nav a:hover {
+    color: #ffcb77;
+  }
+  
+  /* Main container */
+  .container {
+    max-width: 1000px;
+    margin: 3em auto;
+    background: #ffffff;
+    padding: 2em;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  /* Heading */
+  .container h1 {
+    color: #e75918;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 1em;
+    font-size: 2.5em;
+  }
+  
+  /* Search bar form */
+  .search-bar {
+    margin-bottom: 2em;
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+  }
+  
+  .search-bar input {
+    padding: 0.8em;
+    font-size: 1em;
+    width: 300px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+  
+  .search-bar button {
+    padding: 0.8em 1.5em;
+    font-size: 1em;
+    background-color: #87c967;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .search-bar button:hover {
+    background-color: #0f7743;
+  }
+  
+  /* Flash messages */
+  .alert {
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 6px;
+    color: #fff;
+  }
+  
+  .alert.success {
+    background-color: #4CAF50;
+  }
+  
+  .alert.error {
+    background-color: #f44336;
+  }
+  
+  /* Action buttons */
+  .actions {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2em;
+  }
+  
+  .actions .btn {
+    background-color: #87c967;
+    color: white;
+    padding: 0.8em 1.5em;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .actions .btn:hover {
+    background-color: #0f7743;
+    transform: scale(1.05);
+  }
+  
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5em;
+  }
+  
+  table th, table td {
+    padding: 1em;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  table td {
+    background-color: #f9f9f9;
+  }
+  
+  table td a {
+    background-color: #87c967;
+    color: white;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  table td a:hover {
+    background-color: #0f7743;
+    transform: scale(1.05);
+  }
+  
+  /* Footer */
+  footer {
+    text-align: center;
+    background: #0c6639;
+    color: white;
+    font-size: 0.9em;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1em 0;
+    margin-top: auto;
+  }
+  
+
+  form button.btn {
+    background-color: #f44336; /* Red color for delete */
+    color: white;
+    padding: 0.6em 1em;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  form button.btn:hover {
+    background-color: #e53935; /* Darker red on hover */
+    transform: scale(1.05);
+  }

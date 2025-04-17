@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Meal Plan</title>
+  <link rel="stylesheet" href="/css/mealplan.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container">
+    <h1>My Meal Plan - Week <%= week %></h1>
+
+    <% if (!mealPlan) { %>
+        <p>You don't have a meal plan for this week yet.</p>
+        <form action="/mealplan-form" method="GET">
+          <button type="submit" class="btn">Create Meal Plan for This Week</button>
+        </form>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Recipes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% mealPlan.days.forEach(dayEntry => { %>
+            <tr>
+              <td><%= dayEntry.day %></td>
+              <td>
+                <% if (dayEntry.recipes.length === 0) { %>
+                  <em>No recipes assigned</em>
+                <% } else { %>
+                  <ul>
+                    <% dayEntry.recipes.forEach(recipe => { %>
+                      <li>
+                        <a href="/recipes/view/<%= recipe._id %>"><%= recipe.name %></a>
+                      </li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <a href="/mealplan-form" class="btn">Edit This Week's Meal Plan</a>
+
+    <% } %>
+
+    <a href="/dashboard" class="btn">Back to Dashboard</a>
+  </div>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

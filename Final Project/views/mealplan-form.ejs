@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Meal Plan</title>
+  <link rel="stylesheet" href="/css/mealplan-form.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container">
+    <h1>Create Meal Plan - Week <%= week %></h1>
+
+    <form action="/mealplan/save" method="POST">
+      <% ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].forEach(day => { 
+            const selectedRecipes = mealPlan && mealPlan.days 
+                                    ? mealPlan.days.find(d => d.day === day)?.recipes || [] 
+                                    : [];  // Safely handle null mealPlan and its days
+      %>
+        <div class="day-section">
+          <h3><%= day %></h3>
+          <select name="mealPlan[<%= day %>][]" multiple>
+            <% recipes.forEach(recipe => { %>
+              <option value="<%= recipe._id %>" 
+                <%= selectedRecipes.some(r => r._id.toString() === recipe._id.toString()) ? 'selected' : '' %>>
+                <%= recipe.name %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+      <% }) %>
+    
+      <button type="submit" class="btn">Create Meal Plan</button>
+    </form>
+
+    <a href="/mealplan" class="btn">Cancel</a>
+  </div>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

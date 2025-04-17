@@ -1,0 +1,207 @@
+/* Set background image */
+body {
+    background-image: url('/image/Nutrition.avif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Form container */
+  .container {
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+    max-width: 800px;
+    margin: 5% auto;
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Header styles */
+  header {
+    background: #0c6639;
+    padding: 1em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Navigation links */
+  nav {
+    display: flex;
+    justify-content: center;
+  }
+
+  nav a {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 1em;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  nav a:hover {
+    color: #ffcb77;
+  }
+  
+  
+  /* Title */
+  h1 {
+    text-align: center;
+    color: #e75918;
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5em;
+    margin-bottom: 1em;
+  }
+  
+  /* Flash message */
+  .alert {
+    padding: 1em;
+    margin-bottom: 1.5em;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .alert.success {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .alert.error {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  /* Form input fields */
+  form div {
+    margin-bottom: 1em;
+  }
+  
+  form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+  
+  form input[type="text"],
+  form input[type="number"],
+  form textarea,
+  form select {
+    width: 100%;
+    padding: 0.8em;
+    margin-top: 0.3em;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+  }
+  
+  form textarea {
+    height: 150px;
+    resize: vertical;
+  }
+  
+  /* Add Ingredient button */
+  button[type="button"] {
+    background-color: #87c967;
+    color: white;
+    padding: 0.6em 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.3s ease;
+  }
+  
+  button[type="button"]:hover {
+    background-color: #0f7743;
+  }
+  
+  /* Submit button */
+  form button[type="submit"] {
+    background-color: #e75918;
+    color: white;
+    padding: 1em 2em;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+  }
+  
+  form button[type="submit"]:hover {
+    background-color: #d15313;
+  }
+  
+  /* Ingredient list container */
+  #ingredients-container {
+    margin-top: 1em;
+  }
+  
+  .ingredient-item {
+    display: flex;
+    gap: 1em;
+    margin-bottom: 1em;
+  }
+  
+  .ingredient-item input,
+  .ingredient-item select {
+    width: 30%;
+  }
+  
+  .ingredient-item input[type="number"] {
+    width: 20%;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    background: #0c6639;
+    color: white;
+    font-size: 0.9em;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1em 0;
+    margin-top: auto;
+  }
+  
+
+  form button.btn {
+    background-color: #f44336; /* Red color for delete */
+    color: white;
+    padding: 0.6em 1em;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  form button.btn:hover {
+    background-color: #e53935; /* Darker red on hover */
+    transform: scale(1.05);
+  }
+  
+  /* Adjusting responsiveness for smaller screens */
+  @media (max-width: 768px) {
+    .container {
+      margin: 2% auto;
+      padding: 1.5em;
+    }
+  
+    h1 {
+      font-size: 2em;
+    }
+  
+    form button[type="submit"] {
+      font-size: 1em;
+    }
+  
+    .ingredient-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  

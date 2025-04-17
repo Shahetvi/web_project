@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title><%= recipe ? 'Edit Recipe' : 'Add Recipe' %></title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/receipeForm.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
   <%- include('partials/header') %>
@@ -18,10 +19,7 @@
       </div>
     <% } %>
 
-    <!-- <form action="<%= recipe ? '/recipes/' + recipe._id + '/edit' : '/recipes/new' %>" method="POST"> -->
     <form action="<%= recipe ? '/recipes/update/' + recipe._id : '/recipes/new' %>" method="POST">
-
-
       <div>
         <label for="name">Recipe Name</label>
         <input type="text" name="name" id="name" value="<%= recipe ? recipe.name : '' %>" required>
@@ -52,23 +50,21 @@
                         </option>
                       <% }) %>
                     </select>
-                    <input type="number" name="ingredients[<%= index %>][quantity]" value="<%= ingredient.quantity %>" required>
-                    <input type="text" name="ingredients[<%= index %>][unit]" value="<%= ingredient.unit %>" required>
+                    <input type="number" name="ingredients[<%= index %>][quantity]" value="<%= ingredient.quantity %>" placeholder="Quantity" required>
+                    <input type="text" name="ingredients[<%= index %>][unit]" value="<%= ingredient.unit %>" placeholder="Unit" required>
                   </div>
                 <% }) %>
               <% } else { %>
                 <div class="ingredient-item">
                   <select name="ingredients[0][id]" required>
                     <% ingredients.forEach(ingredientOption => { %>
-                      <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %> - <%= ingredientOption.unit %></option>
+                      <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %></option>
                     <% }) %>
                   </select>
-                  <input type="number" name="ingredients[0][quantity]" required>
-                  <input type="text" name="ingredients[0][unit]" required>
+                  <input type="number" name="ingredients[0][quantity]" placeholder="Quantity" required>
+                  <input type="text" name="ingredients[0][unit]"  placeholder="Unit" required>
                 </div>
               <% } %>
-              
-              
         </div>
         <button type="button" onclick="addIngredient()">Add Ingredient</button>
       </div>
@@ -125,13 +121,14 @@
       newIngredient.classList.add('ingredient-item');
       
       newIngredient.innerHTML = `
+
         <select name="ingredients[${index}][id]" required>
           <% ingredients.forEach(ingredientOption => { %>
-            <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %> - <%= ingredientOption.unit %></option>
+            <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %></option>
           <% }) %>
         </select>
-        <input type="number" name="ingredients[${index}][quantity]" required>
-        <input type="text" name="ingredients[${index}][unit]" required>
+        <input type="number" name="ingredients[${index}][quantity]" placeholder="Quantity" required>
+        <input type="text" name="ingredients[${index}][unit]" placeholder="Unit" required>
       `;
       container.appendChild(newIngredient);
     }

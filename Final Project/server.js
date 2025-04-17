@@ -65,10 +65,23 @@ app.get('/dashboard', authenticateToken, async (req, res) => {
 });
 
 app.get('/recipes', authenticateToken, async (req, res) => {
-  const recipes = await Recipe.find();
+  const searchQuery = req.query.search?.trim().toLowerCase() || '';
   const message = req.query.message || null;
   const isAdmin = req.user && req.user.role === 'admin';
-  res.render('recipes', { recipes, message, isAdmin });
+
+  let recipes = await Recipe.find().lean(); 
+
+  if (searchQuery) {
+    recipes = recipes.filter(recipe => {
+      return (
+        recipe.name.toLowerCase().includes(searchQuery) ||
+        recipe.cuisine.toLowerCase().includes(searchQuery) ||
+        recipe.mealType.toLowerCase().includes(searchQuery)
+      );
+    });
+  }
+
+  res.render('recipes', { recipes, message, isAdmin, searchQuery });
 });
 
 // View recipe (read-only)
@@ -77,8 +90,6 @@ app.get('/recipes/view/:id', authenticateToken, async (req, res) => {
     const recipe = await Recipe.findById(req.params.id);
     const ingredients = await Ingredient.find();
     const message = req.query.message || null;
-    console.log('Recipe:', recipe);
-    console.log('Recipe Ingredients:', ingredients);
     res.render('recipe-view', { recipe, ingredients, message  });
   } catch (err) {
     req.session.error = 'Failed to load recipe';
@@ -105,7 +116,32 @@ app.get('/recipes/edit/:id', authenticateToken, async (req, res) => {
 // Add recipe (POST)
 app.post('/recipes/new', authenticateToken, async (req, res) => {
   try {
-    const recipe = new Recipe({ ...req.body, author: req.user.id });
+    const ingredientInputs = req.body.ingredients || [];
+    const fullIngredients = [];
+
+    for (const item of ingredientInputs) {
+      const ingredient = await Ingredient.findById(item.id);
+      if (ingredient) {
+        fullIngredients.push({
+          name: ingredient.name,
+          quantity: item.quantity,
+          unit: item.unit
+        });
+      }
+    }
+
+    const recipe = new Recipe({
+      name: req.body.name,
+      cuisine: req.body.cuisine,
+      mealType: req.body.mealType,
+      ingredients: fullIngredients,
+      instructions: req.body.instructions,
+      difficulty: req.body.difficulty,
+      nutrition: req.body.nutrition,
+      prepTime: req.body.prepTime,
+      author: req.user.id
+    });
+
     await recipe.save();
     req.session.success = 'Recipe added successfully';
     res.redirect('/recipes');
@@ -116,17 +152,45 @@ app.post('/recipes/new', authenticateToken, async (req, res) => {
   }
 });
 
+
 // Update recipe
 app.post('/recipes/update/:id', authenticateToken, async (req, res) => {
   try {
-    await Recipe.findByIdAndUpdate(req.params.id, req.body);
+    const ingredientInputs = req.body.ingredients || [];
+    const fullIngredients = [];
+
+    for (const item of ingredientInputs) {
+      const ingredient = await Ingredient.findById(item.id);
+      if (ingredient) {
+        fullIngredients.push({
+          name: ingredient.name,
+          quantity: item.quantity,
+          unit: item.unit
+        });
+      }
+    }
+
+    const updatedRecipe = {
+      name: req.body.name,
+      cuisine: req.body.cuisine,
+      mealType: req.body.mealType,
+      ingredients: fullIngredients,
+      instructions: req.body.instructions,
+      difficulty: req.body.difficulty,
+      nutrition: req.body.nutrition,
+      prepTime: req.body.prepTime
+    };
+
+    await Recipe.findByIdAndUpdate(req.params.id, updatedRecipe);
     req.session.success = 'Recipe updated successfully';
     res.redirect('/recipes');
   } catch (err) {
+    console.error(err);
     req.session.error = 'Failed to update recipe';
     res.redirect('/recipes');
   }
 });
+
 
 
 // Delete recipe
@@ -210,6 +274,79 @@ app.get('/recipes/:id/reviews', authenticateToken, async (req, res) => {
   });
 });
 
+//Mealplan
+app.get('/mealplan', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const week = getCurrentWeekString();
+
+  const mealPlan = await MealPlan.findOne({ user: userId, week }).populate('days.recipes');
+
+  res.render('mealplan', {
+    user: req.user,
+    week,
+    mealPlan
+  });
+});
+
+app.post('/mealplan-form', authenticateToken, async (req, res) => {
+  const week = getCurrentWeekString();
+  const existing = await MealPlan.findOne({ user: req.user.id, week });
+
+  if (existing) {
+    req.session.error = 'Meal plan already exists for this week.';
+    return res.redirect('/mealplan');
+  }
+
+  const recipes = await Recipe.find();
+  res.render('mealplan-form', { week, recipes });
+});
+
+
+app.post('/mealplan/save', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const week = getCurrentWeekString();
+  const mealPlanData = req.body.mealPlan || {};
+
+  const allDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  const days = allDays.map(day => {
+    const recipes = mealPlanData[day];
+    return {
+      day,
+      recipes: Array.isArray(recipes) ? recipes : (recipes ? [recipes] : [])
+    };
+  });
+
+  let mealPlan = await MealPlan.findOne({ user: userId, week });
+  if (mealPlan) {
+    mealPlan.days = days;
+    await mealPlan.save();
+    req.session.success = 'Meal plan updated!';
+  } else {
+    mealPlan = new MealPlan({ user: userId, week, days });
+    await mealPlan.save();
+    req.session.success = 'Meal plan created!';
+  }
+
+  res.redirect('/mealplan');
+});
+
+
+
+function getCurrentWeekString() {
+  const now = new Date();
+  const oneJan = new Date(now.getFullYear(), 0, 1);
+  const week = Math.ceil((((now - oneJan) / 86400000) + oneJan.getDay() + 1) / 7);
+  return `${now.getFullYear()}-W${week.toString().padStart(2, '0')}`;
+}
+
+
+app.get('/mealplan-form', authenticateToken, async (req, res) => {
+  const recipes = await Recipe.find(); 
+  const week = getCurrentWeekString();
+  const mealPlan = await MealPlan.findOne({ user: req.user.id, week }).populate('days.recipes');
+  res.render('mealplan-form', { recipes, mealPlan, week });
+});
 
 // User registration route
 app.post('/register', async (req, res) => {
