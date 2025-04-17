@@ -348,6 +348,29 @@ app.get('/mealplan-form', authenticateToken, async (req, res) => {
   res.render('mealplan-form', { recipes, mealPlan, week });
 });
 
+app.post('/ingredients/new', authenticateToken, async (req, res) => {
+  const { name, unit, description } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ success: false, message: 'Name is required' });
+  }
+
+  try {
+    const existing = await Ingredient.findOne({ name: name.trim() });
+    if (existing) {
+      return res.status(409).json({ success: false, message: 'Ingredient already exists' });
+    }
+
+    const ingredient = new Ingredient({ name: name.trim(), unit, description });
+    await ingredient.save();
+
+    res.json({ success: true, ingredient });
+  } catch (err) {
+    console.error('Error saving ingredient:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // User registration route
 app.post('/register', async (req, res) => {
   const { username, email, password, role } = req.body;

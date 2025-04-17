@@ -39,34 +39,45 @@
       <div>
         <label for="ingredients">Ingredients</label>
         <div id="ingredients-container">
-            <% if (recipe && recipe.ingredients) { %>
-                <% recipe.ingredients.forEach((ingredient, index) => { %>
-                  <div class="ingredient-item">
-                    <select name="ingredients[<%= index %>][id]" required>
-                      <% ingredients.forEach(ingredientOption => { %>
-                        <option value="<%= ingredientOption._id %>"
-                          <%= ingredientOption.name === ingredient.name && ingredientOption.unit === ingredient.unit ? 'selected' : '' %>>
-                          <%= ingredientOption.name %> - <%= ingredientOption.unit %>
-                        </option>
-                      <% }) %>
-                    </select>
-                    <input type="number" name="ingredients[<%= index %>][quantity]" value="<%= ingredient.quantity %>" placeholder="Quantity" required>
-                    <input type="text" name="ingredients[<%= index %>][unit]" value="<%= ingredient.unit %>" placeholder="Unit" required>
-                  </div>
+          <% if (recipe && recipe.ingredients) { %>
+            <% recipe.ingredients.forEach((ingredient, index) => { %>
+              <div class="ingredient-item">
+                <select name="ingredients[<%= index %>][id]" class="ingredient-select" data-index="<%= index %>" required>
+                  <% ingredients.forEach(ingredientOption => { %>
+                    <option value="<%= ingredientOption._id %>"
+                      <%= ingredientOption.name === ingredient.name && ingredientOption.unit === ingredient.unit ? 'selected' : '' %>>
+                      <%= ingredientOption.name %> - <%= ingredientOption.unit %>
+                    </option>
+                  <% }) %>
+                  <option value="new">-- Add new ingredient --</option>
+                </select>
+                <input type="number" name="ingredients[<%= index %>][quantity]" value="<%= ingredient.quantity %>" placeholder="Quantity" required>
+                <input type="text" name="ingredients[<%= index %>][unit]" value="<%= ingredient.unit %>" placeholder="Unit" required>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <div class="ingredient-item">
+              <select name="ingredients[0][id]" class="ingredient-select" data-index="0" required>
+                <% ingredients.forEach(ingredientOption => { %>
+                  <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %> - <%= ingredientOption.unit %></option>
                 <% }) %>
-              <% } else { %>
-                <div class="ingredient-item">
-                  <select name="ingredients[0][id]" required>
-                    <% ingredients.forEach(ingredientOption => { %>
-                      <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %></option>
-                    <% }) %>
-                  </select>
-                  <input type="number" name="ingredients[0][quantity]" placeholder="Quantity" required>
-                  <input type="text" name="ingredients[0][unit]"  placeholder="Unit" required>
-                </div>
-              <% } %>
+                <option value="new">-- Add new ingredient --</option>
+              </select>
+              <input type="number" name="ingredients[0][quantity]" placeholder="Quantity" required>
+              <input type="text" name="ingredients[0][unit]" placeholder="Unit" required>
+            </div>
+          <% } %>
         </div>
         <button type="button" onclick="addIngredient()">Add Ingredient</button>
+      </div>
+
+      <!-- New Ingredient Form -->
+      <div id="new-ingredient-form" style="display: none; margin-top: 1em;">
+        <h4>Add New Ingredient</h4>
+        <input type="text" id="newIngredientName" placeholder="Name" required>
+        <input type="text" id="newIngredientUnit" placeholder="Unit">
+        <input type="text" id="newIngredientDescription" placeholder="Description (optional)">
+        <button type="button" onclick="saveNewIngredient()">Save Ingredient</button>
       </div>
 
       <!-- Instructions -->
@@ -89,16 +100,16 @@
       <div>
         <h3>Nutrition Info</h3>
         <label for="calories">Calories</label>
-        <input type="number" name="nutrition[calories]" id="calories" value="<%= recipe && recipe.nutrition ? recipe.nutrition.calories : '' %>">
+        <input type="number" name="nutrition[calories]" id="calories" value="<%= recipe?.nutrition?.calories || '' %>">
 
         <label for="fat">Fat (g)</label>
-        <input type="number" name="nutrition[fat]" id="fat" value="<%= recipe && recipe.nutrition ? recipe.nutrition.fat : '' %>">
+        <input type="number" name="nutrition[fat]" id="fat" value="<%= recipe?.nutrition?.fat || '' %>">
 
         <label for="carbs">Carbs (g)</label>
-        <input type="number" name="nutrition[carbs]" id="carbs" value="<%= recipe && recipe.nutrition ? recipe.nutrition.carbs : '' %>">
+        <input type="number" name="nutrition[carbs]" id="carbs" value="<%= recipe?.nutrition?.carbs || '' %>">
 
         <label for="protein">Protein (g)</label>
-        <input type="number" name="nutrition[protein]" id="protein" value="<%= recipe && recipe.nutrition ? recipe.nutrition.protein : '' %>">
+        <input type="number" name="nutrition[protein]" id="protein" value="<%= recipe?.nutrition?.protein || '' %>">
       </div>
 
       <!-- Preparation Time -->
@@ -119,18 +130,64 @@
       const container = document.getElementById('ingredients-container');
       const newIngredient = document.createElement('div');
       newIngredient.classList.add('ingredient-item');
-      
       newIngredient.innerHTML = `
-
-        <select name="ingredients[${index}][id]" required>
+        <select name="ingredients[${index}][id]" class="ingredient-select" data-index="${index}" required>
           <% ingredients.forEach(ingredientOption => { %>
-            <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %></option>
+            <option value="<%= ingredientOption._id %>"><%= ingredientOption.name %> - <%= ingredientOption.unit %></option>
           <% }) %>
+          <option value="new">-- Add new ingredient --</option>
         </select>
         <input type="number" name="ingredients[${index}][quantity]" placeholder="Quantity" required>
         <input type="text" name="ingredients[${index}][unit]" placeholder="Unit" required>
       `;
       container.appendChild(newIngredient);
+    }
+
+    // Track current select element
+    let currentSelect = null;
+
+    document.addEventListener('change', function (e) {
+      if (e.target.matches('.ingredient-select')) {
+        if (e.target.value === 'new') {
+          document.getElementById('new-ingredient-form').style.display = 'block';
+          currentSelect = e.target;
+        }
+      }
+    });
+
+    function saveNewIngredient() {
+      const name = document.getElementById('newIngredientName').value.trim();
+      const unit = document.getElementById('newIngredientUnit').value.trim();
+      const description = document.getElementById('newIngredientDescription').value.trim();
+
+      if (!name) {
+        alert('Ingredient name is required.');
+        return;
+      }
+
+      fetch('/ingredients/new', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, unit, description })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && currentSelect) {
+          const option = document.createElement('option');
+          option.value = data.ingredient._id;
+          option.text = `${data.ingredient.name} - ${data.ingredient.unit}`;
+          option.selected = true;
+          currentSelect.appendChild(option);
+          currentSelect.value = data.ingredient._id;
+
+          document.getElementById('new-ingredient-form').style.display = 'none';
+          document.getElementById('newIngredientName').value = '';
+          document.getElementById('newIngredientUnit').value = '';
+          document.getElementById('newIngredientDescription').value = '';
+        } else {
+          alert('Failed to add ingredient.');
+        }
+      });
     }
   </script>
 </body>
